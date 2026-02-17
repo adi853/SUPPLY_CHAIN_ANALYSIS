@@ -1,0 +1,54 @@
+--1. Creating The Database --
+
+Create database supply_chain;
+use supply_chain;
+
+--2. LATE DELIVERY RATE --
+SELECT 
+    (SUM(CASE
+        WHEN Late_delivery_risk = 1 THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS Late_delivery_percentage
+FROM
+    data_1;
+
+--3. TOP 5 PROFITABLE CATEGORIES --
+SELECT 
+    `category name`, SUM(`benefit per order`) AS total_profit
+FROM
+    data_1
+GROUP BY `category name`
+ORDER BY total_profit DESC
+LIMIT 5;
+
+--4. LATE DELIVERY RISK ANALYSIS --
+SELECT 
+    `Category name`,
+    COUNT(*) AS total_orders,
+    SUM(Late_delivery_risk) AS late_orders,
+    (SUM(late_delivery_risk) / COUNT(*)) / 100 AS late_orders_percentage
+FROM
+    data_1
+GROUP BY `category name`
+ORDER BY late_orders_percentage DESC;
+
+--5. SALES VS PROFIT MARGIN --
+SELECT 
+    `Category name`,
+    SUM(sales),
+    SUM(`Benefit per order`) AS total_profit,
+    (SUM(`Benefit per order`) / SUM(sales)) * 100 AS profit_margin
+FROM
+    data_1
+GROUP BY `Category name`
+ORDER BY profit_margin DESC;
+
+--6. MARKET WISE PERFORMANCE --
+SELECT 
+    `Market`,
+    SUM(Sales) AS market_sales,
+    COUNT(DISTINCT `Order Customer Id`) AS unique_orders
+FROM
+    data_1
+GROUP BY `Market`
+ORDER BY market_sales DESC;
